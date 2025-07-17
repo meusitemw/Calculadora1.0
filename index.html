@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Cargas - Agrovale</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1b4d3e;
+            --secondary-color: #2e7d5b;
+            --accent-color: #4caf50;
+            --light-color: #f5f5f5;
+            --dark-color: #333;
+            --warning-color: #ff9800;
+            --error-color: #f44336;
+            --success-color: #4caf50;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styles */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: white;
+            padding: 15px 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            height: 60px;
+            margin-right: 15px;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .version {
+            font-size: 14px;
+            color: #777;
+            margin-left: 10px;
+        }
+
+        /* Tabs Navigation */
+        .tabs {
+            display: flex;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            cursor: pointer;
+            background-color: #f1f1f1;
+            transition: var(--transition);
+            border-right: 1px solid #ddd;
+            font-weight: 500;
+        }
+
+        .tab:last-child {
+            border-right: none;
+        }
+
+        .tab:hover {
+            background-color: #e9e9e9;
+        }
+
+        .tab.active {
+            background-color: white;
+            color: var(--primary-color);
+            font-weight: 700;
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            background-color: white;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Form Layout */
+        .form-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .form-section {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .form-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        select.form-control {
+            cursor: pointer;
+            background-color: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(27, 77, 62, 0.1);
+        }
+
+        .error-input {
+            border-color: var(--error-color) !important;
+            box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.1) !important;
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* Button Styles */
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        /* Results Section */
+        .results {
+            margin-top: 20px;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 15px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 500;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin: 15px 0;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background-color: #e8f5e9;
+            color: var(--success-color);
+            border-left: 4px solid var(--success-color);
+        }
+
+        .alert-error {
+            background-color: #ffebee;
+            color: var(--error-color);
+            border-left: 4px solid var(--error-color);
+        }
+
+        .alert-info {
+            background-color: #e3f2fd;
+            color: #1976d2;
+            border-left: 4px solid #1976d2;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 14px;
+            margin-top: 30px;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .logo-container {
+                margin-bottom: 15px;
+                justify-content: center;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                border-right: none;
+                border-bottom: 1px solid #ddd;
+            }
+            
+            .form-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo-container">
+                <img src="logo_agrovale.png" alt="Logo Agrovale" class="logo">
+                <div>
+                    <h1 class="title">CALCULADORA DE CARGAS</h1>
+                    <span class="version">versão 3.0</span>
+                </div>
+            </div>
+        </header>
+        
+        <nav class="tabs">
+            <div class="tab active" onclick="openTab(event, 'tab1')">Fardo Cristal + Demerara</div>
+            <div class="tab" onclick="openTab(event, 'tab2')">Apenas Fardos</div>
+            <div class="tab" onclick="openTab(event, 'tab3')">Sacaria</div>
+        </nav>
+        
+        <!-- Tab 1: Fardo Cristal + Demerara -->
+        <div id="tab1" class="tab-content active">
+            <div class="form-container">
+                <div class="form-section">
+                    <h3>Calcular Carga</h3>
+                    <div class="form-group">
+                        <label for="total_fardo">Total de Fardos:</label>
+                        <input type="number" id="total_fardo" class="form-control" min="1" value="1070" oninput="validarNumero(this)">
+                    </div>
+                    <div class="form-group">
+                        <label for="lotes_fardo">Número de Lotes (use .5 para meia):</label>
+                        <input type="number" id="lotes_fardo" class="form-control" min="0.5" step="0.5" value="10.5" oninput="validarNumero(this)">
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo_inicial">Tipo Inicial:</label>
+                        <select id="tipo_inicial" class="form-control">
+                            <option value="cristal">Cristal</option>
+                            <option value="demerara">Demerara</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="cristal">Quantidade de Cristal:</label>
+                        <input type="number" id="cristal" class="form-control" min="0" value="500" oninput="validarNumero(this)">
+                    </div>
+                    <div class="form-group">
+                        <label for="demerara">Quantidade de Demerara:</label>
+                        <input type="number" id="demerara" class="form-control" min="0" value="570" oninput="validarNumero(this)">
+                    </div>
+                    <button class="btn btn-block" onclick="calcularFardosMistos()">Calcular Distribuição</button>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Resultados</h3>
+                    <div id="resultado-fardo-misto" class="results">
+                        <div class="alert alert-info">
+                            Preencha os dados e clique em "Calcular Distribuição" para ver os resultados.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab 2: Apenas Fardos -->
+        <div id="tab2" class="tab-content">
+            <div class="form-container">
+                <div class="form-section">
+                    <h3>Calcular Carga</h3>
+                    <div class="form-group">
+                        <label for="total_cristal">Total de Fardos:</label>
+                        <input type="number" id="total_cristal" class="form-control" min="1" value="1070" oninput="validarNumero(this)">
+                    </div>
+                    <div class="form-group">
+                        <label for="lotes_cristal">Número de Lotes (use .5 para meia):</label>
+                        <input type="number" id="lotes_cristal" class="form-control" min="0.5" step="0.5" value="10.5" oninput="validarNumero(this)">
+                    </div>
+                    <button class="btn btn-block" onclick="calcularFardos()">Calcular Distribuição</button>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Resultados</h3>
+                    <div id="resultado-fardo" class="results">
+                        <div class="alert alert-info">
+                            Preencha os dados e clique em "Calcular Distribuição" para ver os resultados.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab 3: Sacaria -->
+        <div id="tab3" class="tab-content">
+            <div class="form-container">
+                <div class="form-section">
+                    <h3>Calcular Carga</h3>
+                    <div class="form-group">
+                        <label for="total_sacos">Total de Sacos:</label>
+                        <input type="number" id="total_sacos" class="form-control" min="1" value="300" oninput="validarNumero(this)">
+                    </div>
+                    <div class="form-group">
+                        <label for="lotes_sacos">Número de Lotes (use .5 para meia):</label>
+                        <input type="number" id="lotes_sacos" class="form-control" min="0.5" step="0.5" value="11.0" oninput="validarNumero(this)">
+                    </div>
+                    <button class="btn btn-block" onclick="calcularSacos()">Calcular Distribuição</button>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Resultados</h3>
+                    <div id="resultado-sacos" class="results">
+                        <div class="alert alert-info">
+                            Preencha os dados e clique em "Calcular Distribuição" para ver os resultados.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="footer">
+            <p>Calculadora de Cargas - Agrovale &copy; <span id="current-year"></span> | Versão 3.0</p>
+        </footer>
+    </div>
+
+    <script>
+        // Função para alternar entre abas
+        function openTab(evt, tabName) {
+            const tabContents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+            
+            const tabs = document.getElementsByClassName("tab");
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove("active");
+            }
+            
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+        
+        // Função para validar números
+        function validarNumero(input) {
+            if (input.value < 0) {
+                input.value = 0;
+            }
+            if (input.min && input.value < parseFloat(input.min)) {
+                input.value = input.min;
+            }
+            input.classList.remove("error-input");
+        }
+        
+        // Função para formatar a exibição do lastro x altura
+        function formatLastroAltura(quantidade, divisor) {
+            if (quantidade <= 0) return "0";
+            
+            const full = Math.floor(quantidade / divisor);
+            const resto = quantidade % divisor;
+            
+            if (full === 0) return resto.toString();
+            if (resto === 0) return `${divisor}*${full}`;
+            return `${divisor}*${full}+${resto}`;
+        }
+        
+        // Função para calcular fardos mistos (Cristal + Demerara) com tratamento de erros
+        function calcularFardosMistos() {
+            try {
+                // Obter valores dos campos
+                const totalInput = document.getElementById("total_fardo");
+                const lotesInput = document.getElementById("lotes_fardo");
+                const cristalInput = document.getElementById("cristal");
+                const demeraraInput = document.getElementById("demerara");
+                const tipoInicial = document.getElementById("tipo_inicial").value;
+                
+                const total = parseInt(totalInput.value) || 0;
+                const numLotes = parseFloat(lotesInput.value) || 0;
+                const cristal = parseInt(cristalInput.value) || 0;
+                const demerara = parseInt(demeraraInput.value) || 0;
+                
+                // Elemento de resultados
+                const resultadoDiv = document.getElementById("resultado-fardo-misto");
+                
+                // Validações básicas
+                if (isNaN(total) || isNaN(numLotes) || isNaN(cristal) || isNaN(demerara)) {
+                    throw new Error("Todos os campos devem conter valores numéricos válidos.");
+                }
+                
+                if (total <= 0 || numLotes <= 0) {
+                    throw new Error("Valores totais e número de lotes devem ser maiores que zero.");
+                }
+                
+                if (cristal < 0 || demerara < 0) {
+                    throw new Error("Valores de cristal e demerara não podem ser negativos.");
+                }
+                
+                // Verificar se a soma bate
+                if (cristal + demerara !== total) {
+                    throw new Error(`A soma de cristal (${cristal}) e demerara (${demerara}) não equivale ao total (${total}).`);
+                }
+                
+                // Verificar se há quantidade suficiente para distribuição
+                if (numLotes > total) {
+                    throw new Error("Número de lotes não pode ser maior que o total de fardos.");
+                }
+                
+                const lotesInteiros = Math.floor(numLotes);
+                const temMeioLote = numLotes % 1 !== 0;
+                
+                // Calcular tamanho base do lote
+                let tamanhoLote, resto;
+                if (temMeioLote) {
+                    tamanhoLote = Math.floor(total / (lotesInteiros + 0.5));
+                    resto = total - (lotesInteiros * tamanhoLote);
+                } else {
+                    tamanhoLote = Math.floor(total / lotesInteiros);
+                    resto = total % lotesInteiros;
+                }
+                
+                // Verificar se o tamanho do lote é válido
+                if (tamanhoLote <= 0) {
+                    throw new Error("Tamanho do lote calculado é inválido. Verifique os valores informados.");
+                }
+                
+                let dados = [];
+                let cristalRestante = cristal;
+                let demeraraRestante = demerara;
+                
+                // Função para distribuir cada lote
+                const distribuirLote = (quantidade, isMeioLote = false) => {
+                    let cristalNoLote = 0;
+                    let demeraraNoLote = 0;
+                    
+                    if (tipoInicial === "cristal") {
+                        cristalNoLote = Math.min(cristalRestante, quantidade);
+                        demeraraNoLote = quantidade - cristalNoLote;
+                        
+                        // Ajustar se não houver demerara suficiente
+                        if (demeraraNoLote > demeraraRestante) {
+                            demeraraNoLote = demeraraRestante;
+                            cristalNoLote = quantidade - demeraraNoLote;
+                        }
+                    } else {
+                        demeraraNoLote = Math.min(demeraraRestante, quantidade);
+                        cristalNoLote = quantidade - demeraraNoLote;
+                        
+                        // Ajustar se não houver cristal suficiente
+                        if (cristalNoLote > cristalRestante) {
+                            cristalNoLote = cristalRestante;
+                            demeraraNoLote = quantidade - cristalNoLote;
+                        }
+                    }
+                    
+                    // Ajustar para meio lote (6 fardos) ou lote completo (12 fardos)
+                    const divisor = isMeioLote ? 6 : 12;
+                    
+                    dados.push([
+                        isMeioLote ? "Meio lote" : `Lote ${dados.length + 1}`,
+                        formatLastroAltura(cristalNoLote, divisor),
+                        formatLastroAltura(demeraraNoLote, divisor),
+                        quantidade
+                    ]);
+                    
+                    cristalRestante -= cristalNoLote;
+                    demeraraRestante -= demeraraNoLote;
+                };
+                
+                // Distribuição melhorada
+                if (!temMeioLote) {
+                    // Distribuir primeiro o resto
+                    if (resto > 0) {
+                        distribuirLote(resto);
+                    }
+                    
+                    // Distribuir lotes completos
+                    for (let i = dados.length; i < lotesInteiros; i++) {
+                        distribuirLote(tamanhoLote);
+                    }
+                } else {
+                    // Distribuição com meio lote
+                    for (let i = 0; i < lotesInteiros; i++) {
+                        distribuirLote(tamanhoLote);
+                    }
+                    
+                    // Meio lote
+                    if (resto > 0) {
+                        distribuirLote(resto, true);
+                    }
+                }
+                
+                // Verificar distribuição
+                const totalCalculado = dados.reduce((sum, row) => sum + row[3], 0);
+                const cristalDistribuido = cristal - cristalRestante;
+                const demeraraDistribuido = demerara - demeraraRestante;
+                
+                if (totalCalculado !== total || cristalDistribuido !== cristal || demeraraDistribuido !== demerara) {
+                    throw new Error(`Erro na distribuição! Faltou distribuir: Cristal: ${cristalRestante}/${cristal} | Demerara: ${demeraraRestante}/${demerara}`);
+                }
+                
+                // Criar tabela HTML
+                let html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Lote</th>
+                                <th>Cristal</th>
+                                <th>Demerara</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                
+                dados.forEach(row => {
+                    html += `
+                        <tr>
+                            <td>${row[0]}</td>
+                            <td>${row[1]}</td>
+                            <td>${row[2]}</td>
+                            <td>${row[3]}</td>
+                        </tr>`;
+                });
+                
+                html += `
+                        </tbody>
+                    </table>
+                    <div class="alert alert-success">
+                        ✓ Distribuição correta! Total: ${totalCalculado}<br>
+                        Tipo Inicial: ${tipoInicial === 'cristal' ? 'Cristal' : 'Demerara'}
+                    </div>`;
+                
+                resultadoDiv.innerHTML = html;
+                
+            } catch (error) {
+                // Exibir mensagem de erro detalhada
+                const errorMessage = error.message || "Ocorreu um erro durante o cálculo. Verifique os valores informados.";
+                document.getElementById("resultado-fardo-misto").innerHTML = `
+                    <div class="alert alert-error">
+                        <strong>ERRO!</strong> ${errorMessage}
+                    </div>`;
+                
+                // Adicionar classe de erro aos campos problemáticos
+                const inputs = document.querySelectorAll('#tab1 input[type="number"]');
+                inputs.forEach(input => input.classList.remove('error-input'));
+                
+                if (error.message.includes("total")) {
+                    document.getElementById("total_fardo").classList.add('error-input');
+                }
+                if (error.message.includes("lotes")) {
+                    document.getElementById("lotes_fardo").classList.add('error-input');
+                }
+                if (error.message.includes("cristal")) {
+                    document.getElementById("cristal").classList.add('error-input');
+                }
+                if (error.message.includes("demerara")) {
+                    document.getElementById("demerara").classList.add('error-input');
+                }
+            }
+        }
+        
+        // Função para calcular apenas fardos
+        function calcularFardos() {
+            const total = parseInt(document.getElementById("total_cristal").value) || 0;
+            const numLotes = parseFloat(document.getElementById("lotes_cristal").value) || 0;
+            
+            // Validações
+            if (total <= 0 || numLotes <= 0) {
+                document.getElementById("resultado-fardo").innerHTML = 
+                    `<div class="alert alert-error">ERRO! Valores totais e número de lotes devem ser maiores que zero.</div>`;
+                return;
+            }
+            
+            const lotesInteiros = Math.floor(numLotes);
+            const temMeioLote = numLotes % 1 !== 0;
+            
+            let tamanhoLote, resto;
+            if (temMeioLote) {
+                tamanhoLote = Math.floor(total / (lotesInteiros + 0.5));
+                resto = total - (lotesInteiros * tamanhoLote);
+            } else {
+                tamanhoLote = Math.floor(total / lotesInteiros);
+                resto = total % lotesInteiros;
+            }
+            
+            let dados = [];
+            
+            if (!temMeioLote) {
+                if (resto > 0) {
+                    dados.push(["Lote 1", formatLastroAltura(tamanhoLote + resto, 12), tamanhoLote + resto]);
+                    for (let i = 1; i < lotesInteiros; i++) {
+                        dados.push([`Lote ${i+1}`, formatLastroAltura(tamanhoLote, 12), tamanhoLote]);
+                    }
+                } else {
+                    for (let i = 0; i < lotesInteiros; i++) {
+                        dados.push([`Lote ${i+1}`, formatLastroAltura(tamanhoLote, 12), tamanhoLote]);
+                    }
+                }
+            } else {
+                for (let i = 0; i < lotesInteiros; i++) {
+                    dados.push([`Lote ${i+1}`, formatLastroAltura(tamanhoLote, 12), tamanhoLote]);
+                }
+                if (resto > 0) {
+                    dados.push(["Meio lote", formatLastroAltura(resto, 6), resto]);
+                }
+            }
+            
+            // Verificar se a soma bate
+            const totalCalculado = dados.reduce((sum, row) => sum + row[2], 0);
+            
+            // Criar tabela HTML
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Lote</th>
+                            <th>Lastro x Altura</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+            
+            dados.forEach(row => {
+                html += `
+                    <tr>
+                        <td>${row[0]}</td>
+                        <td>${row[1]}</td>
+                        <td>${row[2]}</td>
+                    </tr>`;
+            });
+            
+            html += `
+                    </tbody>
+                </table>`;
+            
+            if (totalCalculado === total) {
+                html += `<div class="alert alert-success">✓ Distribuição correta! Total: ${totalCalculado}</div>`;
+            } else {
+                html += `<div class="alert alert-error">ERRO! Faltou distribuir: ${total - totalCalculado} fardos</div>`;
+            }
+            
+            document.getElementById("resultado-fardo").innerHTML = html;
+        }
+        
+        // Função para calcular sacos
+        function calcularSacos() {
+            const total = parseInt(document.getElementById("total_sacos").value) || 0;
+            const numLotes = parseFloat(document.getElementById("lotes_sacos").value) || 0;
+            
+            // Validações
+            if (total <= 0 || numLotes <= 0) {
+                document.getElementById("resultado-sacos").innerHTML = 
+                    `<div class="alert alert-error">ERRO! Valores totais e número de lotes devem ser maiores que zero.</div>`;
+                return;
+            }
+            
+            const lotesInteiros = Math.floor(numLotes);
+            const temMeioLote = numLotes % 1 !== 0;
+            
+            let tamanhoLote, resto;
+            if (temMeioLote) {
+                tamanhoLote = Math.floor(total / (lotesInteiros + 0.5));
+                resto = total - (lotesInteiros * tamanhoLote);
+            } else {
+                tamanhoLote = Math.floor(total / lotesInteiros);
+                resto = total % lotesInteiros;
+            }
+            
+            let dados = [];
+            
+            if (!temMeioLote) {
+                if (resto > 0) {
+                    dados.push(["Lote 1", formatLastroAltura(tamanhoLote + resto, 5), tamanhoLote + resto]);
+                    for (let i = 1; i < lotesInteiros; i++) {
+                        dados.push([`Lote ${i+1}`, formatLastroAltura(tamanhoLote, 5), tamanhoLote]);
+                    }
+                } else {
+                    for (let i = 0; i < lotesInteiros; i++) {
+                        dados.push([`Lote ${i+1}`, formatLastroAltura(tamanhoLote, 5), tamanhoLote]);
+                    }
+                }
+            } else {
+                for (let i = 0; i < lotesInteiros; i++) {
+                    dados.push([`Lote ${i+1}`, formatLastroAltura(tamanhoLote, 5), tamanhoLote]);
+                }
+                if (resto > 0) {
+                    dados.push(["Meio lote", formatLastroAltura(resto, 5), resto]);
+                }
+            }
+            
+            // Verificar se a soma bate
+            const totalCalculado = dados.reduce((sum, row) => sum + row[2], 0);
+            
+            // Criar tabela HTML
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Lote</th>
+                            <th>Lastro x Altura</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+            
+            dados.forEach(row => {
+                html += `
+                    <tr>
+                        <td>${row[0]}</td>
+                        <td>${row[1]}</td>
+                        <td>${row[2]}</td>
+                    </tr>`;
+            });
+            
+            html += `
+                    </tbody>
+                </table>`;
+            
+            if (totalCalculado === total) {
+                html += `<div class="alert alert-success">✓ Distribuição correta! Total: ${totalCalculado}</div>`;
+            } else {
+                html += `<div class="alert alert-error">ERRO! Faltou distribuir: ${total - totalCalculado} sacos</div>`;
+            }
+            
+            document.getElementById("resultado-sacos").innerHTML = html;
+        }
+
+        // Configurações iniciais quando o DOM estiver carregado
+        document.addEventListener('DOMContentLoaded', function() {
+            // Atualizar ano no footer
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+            
+            // Adicionar listeners para tecla Enter
+            document.querySelectorAll('input').forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const tab = this.closest('.tab-content').id;
+                        if (tab === 'tab1') calcularFardosMistos();
+                        else if (tab === 'tab2') calcularFardos();
+                        else if (tab === 'tab3') calcularSacos();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
